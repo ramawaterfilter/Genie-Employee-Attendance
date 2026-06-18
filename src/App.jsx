@@ -58,6 +58,8 @@ function App(){
   const [busy,setBusy]=useState(false);
   const [err,setErr]=useState(null);
   const [tplReady,setTplReady]=useState(false);
+  const [theme,setTheme]=useState(()=>{const t=localStorage.getItem('theme');return t||'dark';});
+  useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('theme',theme);},[theme]);
 
   const cycle=useMemo(()=>getPayrollCycle(year,month,settings),[year,month]);
   const monthLabel=`${MONTHNAMES[month-1]}_${year}`;
@@ -142,9 +144,14 @@ function App(){
         <img className="logo-img" src={RAMA_LOGO} alt="RAMA"/>
         <div><h1>Genie: Employee Attendance</h1><p>Biometric → payroll-ready workbook · 25th–24th cycle</p></div>
       </div>
-      <button className="btn btn-export" disabled={!result||busy} onClick={doExport}>
-        {busy?<span className="spinner"/>:'⬇'} Export Attendance_Final_{monthLabel}.xlsx
-      </button>
+      <div className="topbar-rhs">
+        <button className="theme-btn" onClick={()=>setTheme(t=>t==='dark'?'light':'dark')} title="Toggle theme">
+          {theme==='dark'?'☀️':'🌙'}
+        </button>
+        <button className="btn btn-export" disabled={!result||busy} onClick={doExport}>
+          {busy?<span className="spinner"/>:'⬇'} Export Attendance_Final_{monthLabel}.xlsx
+        </button>
+      </div>
     </div>
 
     {/* 1 UPLOAD */}
